@@ -6,15 +6,18 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 
-public class PLYReader {
+public class PLYEReader {
 
 	private int vertexCount;
 	private int faceCount;
-	private float[] vertices;
+	//private float[] vertices;
+    private FloatBuffer verti;
 	private int[] faces;
 
-	public PLYReader(InputStream is) throws IOException {
+	public PLYEReader(InputStream is) throws IOException {
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 		try {
@@ -47,24 +50,22 @@ public class PLYReader {
 				}
 				nl = reader.readLine();
 			}
-			vertices = new float[vertexCount * 8];
+			verti = FloatBuffer.allocate(vertexCount * 9);
 			for (int i = 0; i < vertexCount; i++) {
-				nl = reader.readLine();
-				if (nl == null)
-					throw new IOException("Unexpected end of file at vertex: " + i);
-				String[] parts = nl.split(" ");
-				vertices[i * 8 + 0] = Float.parseFloat(parts[0]);
-				vertices[i * 8 + 1] = Float.parseFloat(parts[1]);
-				vertices[i * 8 + 2] = Float.parseFloat(parts[2]);
-				vertices[i * 8 + 3] = Float.parseFloat(parts[3]);
-				vertices[i * 8 + 4] = Float.parseFloat(parts[4]);
-				vertices[i * 8 + 5] = Float.parseFloat(parts[5]);
-				
-				if(parts.length > 6) {
-					vertices[i * 8 + 6] = Float.parseFloat(parts[6]);
-					vertices[i * 8 + 7] = Float.parseFloat(parts[7]);
-				}
-			}
+                nl = reader.readLine();
+                if (nl == null)
+                    throw new IOException("Unexpected end of file at vertex: " + i);
+                String[] parts = nl.split(" ");
+                verti.put(Float.parseFloat(parts[0]));
+                verti.put(Float.parseFloat(parts[1]));
+                verti.put(Float.parseFloat(parts[2]));
+                verti.put(Float.parseFloat(parts[3]));
+                verti.put(Float.parseFloat(parts[4]));
+                verti.put(Float.parseFloat(parts[5]));
+                verti.put(Float.parseFloat(parts[6]));
+                verti.put(1.0f-Float.parseFloat(parts[7]));
+                verti.put(0);
+            }
 			faces = new int[faceCount * 3];
             int rfc = 0;
 			for (int i = 0; i < faceCount; i++) {
@@ -79,20 +80,32 @@ public class PLYReader {
                     int d = Integer.parseInt(parts[4]);
                     ensureFaces(rfc);
                     faces[rfc * 3 + 0] = a;
+                    verti.put(a * 9 + 8, rfc);
                     faces[rfc * 3 + 1] = b;
+                    verti.put(b * 9 + 8, rfc);
                     faces[rfc * 3 + 2] = c;
+                    verti.put(c * 9 + 8, rfc);
                     rfc++;
                     ensureFaces(rfc);
                     faces[rfc * 3 + 0] = c;
+                    verti.put(c * 9 + 8, rfc);
                     faces[rfc * 3 + 1] = d;
+                    verti.put(d * 9 + 8, rfc);
                     faces[rfc * 3 + 2] = a;
+                    verti.put(a * 9 + 8, rfc);
                     rfc++;
 
 
                 } else if (parts.length == 4) {
-                    faces[rfc * 3 + 0] = Integer.parseInt(parts[1]);
-                    faces[rfc * 3 + 1] = Integer.parseInt(parts[2]);
-                    faces[rfc * 3 + 2] = Integer.parseInt(parts[3]);
+                    int a = Integer.parseInt(parts[1]);
+                    int b = Integer.parseInt(parts[2]);
+                    int c = Integer.parseInt(parts[3]);
+                    faces[rfc * 3 + 0] = a;
+                    verti.put(a * 9 + 8, rfc);
+                    faces[rfc * 3 + 1] = b;
+                    verti.put(b * 9 + 8, rfc);
+                    faces[rfc * 3 + 2] = c;
+                    verti.put(c * 9 + 8, rfc);
                     rfc++;
                 }
 			}
@@ -105,6 +118,7 @@ public class PLYReader {
 		} finally {
 			reader.close();
 		}
+        verti.rewind();
 	}
 
     private void ensureFaces(int current) {
@@ -117,7 +131,7 @@ public class PLYReader {
 
 	public static void main(String[] args) {
 		try {
-			new PLYReader(new FileInputStream(new File("test.ply")));
+			new PLYEReader(new FileInputStream(new File("test.ply")));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -131,8 +145,8 @@ public class PLYReader {
 		return this.faceCount;
 	}
 	
-	public float[] getVertices() {
-		return vertices;
+	public FloatBuffer getVertices() {
+		return verti;
 	}
 	
 	public int[] getIndices() {

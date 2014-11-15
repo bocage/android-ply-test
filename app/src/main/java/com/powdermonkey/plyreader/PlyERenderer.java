@@ -12,6 +12,7 @@ import com.powdermonkey.common.SphericalCameraDolly;
 import com.powdermonkey.common.TextureHelper;
 import com.powdermonkey.mapping.IOpenGLMesh;
 import com.powdermonkey.mapping.v3n3t2.V3N3T2;
+import com.powdermonkey.mapping.v3n3t2e1.V3N3T2E1;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -22,7 +23,7 @@ import javax.microedition.khronos.opengles.GL10;
  * @author paddax@gmail.com
  *
  */
-public class PlyRenderer implements GLSurfaceView.Renderer {
+public class PlyERenderer implements GLSurfaceView.Renderer {
 
 	private SphericalCameraDolly camera;
 	private Context context;
@@ -41,7 +42,7 @@ public class PlyRenderer implements GLSurfaceView.Renderer {
 	 */
 	private float[] viewMatrix = new float[16];
 
-	
+
 	/**
 	 * Store the model matrix. This matrix is used to move models from object
 	 * space (where each model can be thought of being located at the center of
@@ -54,36 +55,36 @@ public class PlyRenderer implements GLSurfaceView.Renderer {
 	 * the shader program.
 	 */
 	private final float[] mvMatrix = new float[16];
-	
+
 	/**
 	 * Allocate storage for the final combined matrix. This will be passed into
 	 * the shader program.
 	 */
 	private final float[] mvpMatrix = new float[16];
-	
+
 	/**
 	 * Used to hold the current position of the light in world space (after
 	 * transformation via model matrix).
 	 */
 	private float[] lightPosInWorldSpace = new float[3];
 
-	private V3N3T2 attrib;
+	private V3N3T2E1 attrib;
 	private IOpenGLMesh mesh;
 	private int tex;
 
-	public PlyRenderer(Context context) {
+	public PlyERenderer(Context context) {
 		this.context = context;
 		camera = new SphericalCameraDolly();
 		camera.setNearField(1);
 		camera.setFarField(90);
-		attrib = new V3N3T2();
+		attrib = new V3N3T2E1();
 	}
 	
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 		
 	    String vertexShader = RawResourceReader.readTextFileFromRawResource(context,
-				R.raw.v3n3t2vert);
+				R.raw.v3n3t2e1vert);
 		String fragmentShader = RawResourceReader.readTextFileFromRawResource(context,
 				R.raw.v3n3t2frag);
 
@@ -101,7 +102,7 @@ public class PlyRenderer implements GLSurfaceView.Renderer {
 		GLES20.glUseProgram(program);
 		attrib.prepare(program);
 		GLES20.glUseProgram(0);
-		tex = TextureHelper.loadTexture(context, R.drawable.monkey); //.me_256_256);
+		tex = TextureHelper.loadTexture(context, R.drawable.monkey3); //.me_256_256);
 		Log.i("PLY", "Surface created");
 		if(mesh !=null) {
 			mesh.attach();
@@ -116,18 +117,21 @@ public class PlyRenderer implements GLSurfaceView.Renderer {
 		// Create a new perspective projection matrix. The height will stay the
 		// same while the width will vary as per aspect ratio.
 
-		float scaleup = 0.5f;
+		float scaleup = 0.2f;
 		float ratio = (float) height / width;
 		ratio = ratio * scaleup;
 		final float left = -scaleup;
 		final float right = scaleup;
 		float bottom = -ratio;
 		final float top = ratio;
-		final float near = 2f;
+		final float near = 5f;
 		final float far = 800.0f;
 
 		Matrix.frustumM(projectionMatrix, 0, left, right, bottom, top, near, far);
 	}
+
+    private float angle = 0;
+    private int count;
 
 	@Override
 	public void onDrawFrame(GL10 gl) {
@@ -171,7 +175,19 @@ public class PlyRenderer implements GLSurfaceView.Renderer {
         
         // Tell the shader which texture unit contains our texture 0=GL_TEXTURE0
         GLES20.glUniform1i(attrib.textureUniform, 0);
-        
+
+        GLES20.glUniform1f(attrib.alphaUniform, angle);
+        if(count < 500)
+            angle += 0.03;
+        else if (count > 700) {
+            count = 0;
+        }
+        else {
+            angle = 0;
+        }
+        count++;
+
+
         // Draw the mesh
 		mesh.draw();
 		GLES20.glUseProgram(0);
@@ -187,5 +203,13 @@ public class PlyRenderer implements GLSurfaceView.Renderer {
 	public SphericalCameraDolly getCamera() {
 		return camera;
 	}
+
+    public float getAngle() {
+        return angle;
+    }
+
+    public float[] getViewMatrix() {
+        return viewMatrix;
+    }
 
 }

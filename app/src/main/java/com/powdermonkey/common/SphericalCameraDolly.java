@@ -1,6 +1,7 @@
 package com.powdermonkey.common;
 
 import android.opengl.Matrix;
+import android.os.Bundle;
 import android.util.Log;
 
 public class SphericalCameraDolly {
@@ -152,4 +153,20 @@ public class SphericalCameraDolly {
 	public float getDistance() {
 		return eye[2];
 	}
+
+    public void savePersistent(String prefix, Bundle b) {
+        b.putFloatArray(prefix + ".eye", eye);
+        b.putFloatArray(prefix + ".target", target);
+        b.putFloatArray(prefix + ".up", up);
+        b.putFloatArray(prefix + ".right", right);
+        b.putFloatArray(prefix + ".out", out);
+    }
+
+    public void loadPersistent(String prefix, Bundle b) {
+        eye = b.getFloatArray(prefix + ".eye");
+        target = b.getFloatArray(prefix + ".target");
+        up = b.getFloatArray(prefix + ".up");
+        right = b.getFloatArray(prefix + ".right");
+        out = b.getFloatArray(prefix + ".out");
+    }
 }

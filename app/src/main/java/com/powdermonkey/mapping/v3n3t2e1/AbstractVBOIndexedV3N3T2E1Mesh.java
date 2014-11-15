@@ -1,4 +1,4 @@
-package com.powdermonkey.mapping.v3n3t2;
+package com.powdermonkey.mapping.v3n3t2e1;
 
 import android.opengl.GLES20;
 
@@ -6,7 +6,6 @@ import com.powdermonkey.mapping.IOpenGLMesh;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.nio.ShortBuffer;
 
 /**
  * Simple immutable object derivatives must supply three methods.
@@ -20,7 +19,7 @@ import java.nio.ShortBuffer;
  * @author pdavis@winbrogroup.com
  * 
  */
-public abstract class AbstractVBOIndexedV3N3T2Mesh implements IOpenGLMesh {
+public abstract class AbstractVBOIndexedV3N3T2E1Mesh implements IOpenGLMesh {
 
 	private int[] vboId = new int[1];
 	private int[] vboiId = new int[1];
@@ -57,27 +56,31 @@ public abstract class AbstractVBOIndexedV3N3T2Mesh implements IOpenGLMesh {
 		// Create a new Vertex Buffer Object in memory and select it (bind)
 		GLES20.glGenBuffers(1, vboId, 0);
 		GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vboId[0]);
-		GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, verticesBuffer.capacity() * V3N3T2.BYTES_PER_FLOAT, verticesBuffer,
+		GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, verticesBuffer.capacity() * V3N3T2E1.BYTES_PER_FLOAT, verticesBuffer,
 				GLES20.GL_STATIC_DRAW);
 
 		// Put the position coordinates in attribute list 0
-		GLES20.glVertexAttribPointer(0, V3N3T2.POSITION_DATA_SIZE, GLES20.GL_FLOAT, false, V3N3T2.STRIDE,
-				V3N3T2.POSITION_DATA_OFFSET);
+		GLES20.glVertexAttribPointer(0, V3N3T2E1.POSITION_DATA_SIZE, GLES20.GL_FLOAT, false, V3N3T2E1.STRIDE,
+				V3N3T2E1.POSITION_DATA_OFFSET);
 
 		// Put the normal coordinates in attribute list 1
-		GLES20.glVertexAttribPointer(1, V3N3T2.NORMAL_DATA_SIZE, GLES20.GL_FLOAT, false, V3N3T2.STRIDE,
-				V3N3T2.NORMAL_DATA_OFFSET);
+		GLES20.glVertexAttribPointer(1, V3N3T2E1.NORMAL_DATA_SIZE, GLES20.GL_FLOAT, false, V3N3T2E1.STRIDE,
+				V3N3T2E1.NORMAL_DATA_OFFSET);
 
 		// Put the texture coordinates in attribute list 2
-		GLES20.glVertexAttribPointer(2, V3N3T2.TEXTURE_COORDINATE_DATA_SIZE, GLES20.GL_FLOAT, false, V3N3T2.STRIDE,
-				V3N3T2.TEXTURE_COORDINATE_DATA_OFFSET);
+        GLES20.glVertexAttribPointer(2, V3N3T2E1.TEXTURE_COORDINATE_DATA_SIZE, GLES20.GL_FLOAT, false, V3N3T2E1.STRIDE,
+                V3N3T2E1.TEXTURE_COORDINATE_DATA_OFFSET);
 
-		GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
+        // Put the enum in attribute list 3
+        GLES20.glVertexAttribPointer(3, V3N3T2E1.ENUM_DATA_SIZE, GLES20.GL_FLOAT, false, V3N3T2E1.STRIDE,
+                V3N3T2E1.ENUM_DATA_OFFSET);
+
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
 
 		// Create a new VBO for the indices and select it (bind) - INDICES
 		GLES20.glGenBuffers(1, vboiId, 0);
 		GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, vboiId[0]);
-		GLES20.glBufferData(GLES20.GL_ELEMENT_ARRAY_BUFFER, indicesBuffer.capacity() * V3N3T2.BYTES_PER_INT,
+		GLES20.glBufferData(GLES20.GL_ELEMENT_ARRAY_BUFFER, indicesBuffer.capacity() * V3N3T2E1.BYTES_PER_INT,
 				indicesBuffer, GLES20.GL_STATIC_DRAW);
 		GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
@@ -91,21 +94,26 @@ public abstract class AbstractVBOIndexedV3N3T2Mesh implements IOpenGLMesh {
 
 		GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vboId[0]);
 		// Put the position coordinates in attribute list 0
-		GLES20.glVertexAttribPointer(0, V3N3T2.POSITION_DATA_SIZE, GLES20.GL_FLOAT, false, V3N3T2.STRIDE,
-				V3N3T2.POSITION_DATA_OFFSET);
+		GLES20.glVertexAttribPointer(0, V3N3T2E1.POSITION_DATA_SIZE, GLES20.GL_FLOAT, false, V3N3T2E1.STRIDE,
+				V3N3T2E1.POSITION_DATA_OFFSET);
 
 		// Put the normal coordinates in attribute list 1
-		GLES20.glVertexAttribPointer(1, V3N3T2.NORMAL_DATA_SIZE, GLES20.GL_FLOAT, false, V3N3T2.STRIDE,
-				V3N3T2.NORMAL_DATA_OFFSET);
+		GLES20.glVertexAttribPointer(1, V3N3T2E1.NORMAL_DATA_SIZE, GLES20.GL_FLOAT, false, V3N3T2E1.STRIDE,
+				V3N3T2E1.NORMAL_DATA_OFFSET);
 
 		// Put the texture coordinates in attribute list 2
-		GLES20.glVertexAttribPointer(2, V3N3T2.TEXTURE_COORDINATE_DATA_SIZE, GLES20.GL_FLOAT, false, V3N3T2.STRIDE,
-				V3N3T2.TEXTURE_COORDINATE_DATA_OFFSET);
+		GLES20.glVertexAttribPointer(2, V3N3T2E1.TEXTURE_COORDINATE_DATA_SIZE, GLES20.GL_FLOAT, false, V3N3T2E1.STRIDE,
+				V3N3T2E1.TEXTURE_COORDINATE_DATA_OFFSET);
 
-		// Bind to the VAO that has all the information about the vertices
+        // Put the texture coordinates in attribute list 2
+        GLES20.glVertexAttribPointer(3, V3N3T2E1.ENUM_DATA_SIZE, GLES20.GL_FLOAT, false, V3N3T2E1.STRIDE,
+                V3N3T2E1.ENUM_DATA_OFFSET);
+
+        // Bind to the VAO that has all the information about the vertices
 		GLES20.glEnableVertexAttribArray(0);
 		GLES20.glEnableVertexAttribArray(1);
 		GLES20.glEnableVertexAttribArray(2);
+        GLES20.glEnableVertexAttribArray(3);
 
 		// Bind to the index VBO that has all the information about the order of
 		// the vertices
@@ -122,6 +130,7 @@ public abstract class AbstractVBOIndexedV3N3T2Mesh implements IOpenGLMesh {
 		GLES20.glDisableVertexAttribArray(0);
 		GLES20.glDisableVertexAttribArray(1);
 		GLES20.glDisableVertexAttribArray(2);
+        GLES20.glDisableVertexAttribArray(3);
 		GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
 	}
 }

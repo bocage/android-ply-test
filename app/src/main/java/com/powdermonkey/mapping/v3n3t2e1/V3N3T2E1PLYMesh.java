@@ -1,18 +1,17 @@
-package com.powdermonkey.mapping.v3n3t2;
+package com.powdermonkey.mapping.v3n3t2e1;
 
-import com.powdermonkey.common.PLYReader;
+import com.powdermonkey.common.PLYEReader;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.nio.ShortBuffer;
 
-public class V3N3T2PLYMesh extends AbstractVBOIndexedV3N3T2Mesh {
+public class V3N3T2E1PLYMesh extends AbstractVBOIndexedV3N3T2E1Mesh {
 
 	private FloatBuffer floatBuffer;
 	private IntBuffer intBuffer;
 	
-	public V3N3T2PLYMesh(PLYReader reader) {
-		floatBuffer = FloatBuffer.wrap(reader.getVertices());
+	public V3N3T2E1PLYMesh(PLYEReader reader) {
+		floatBuffer = reader.getVertices();
 		intBuffer = IntBuffer.wrap(reader.getIndices());
 	}
 	@Override
